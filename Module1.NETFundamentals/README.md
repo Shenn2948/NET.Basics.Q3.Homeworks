@@ -21,7 +21,7 @@ Create a .NET standard library which will handle “hello world” concatenation
 5 stars – Mentee can lead discussion on the Self-check questions.
 
 ## Questions for the self-check:
-1. What does the .NET ecosystem provide?
+1. **What does the .NET ecosystem provide?**
 
 > The .NET ecosystem encompasses different runtimes, such as:
 > - .NET Framework (WPF, Windows Forms, ASP.NET) - Windows centric.
@@ -33,7 +33,7 @@ Create a .NET standard library which will handle “hello world” concatenation
 >
 > All the runtimes use tools and infrastructure to compile and run code. This includes languages (C#, Visual Basic), compilers (Roslyn), garbage collection, as well as build tools like MS Build or (Core) CLR.
 
-2. What are .NET implementations? Which ones are used nowadays?
+2. **What are .NET implementations? Which ones are used nowadays?**
 
 > A .NET app is developed for one or more implementations of .NET. Implementations of .NET include .NET Framework, .NET 5+ (and .NET Core), Universal Windows Platform (UWP) and Mono.
 >
@@ -46,7 +46,7 @@ Create a .NET standard library which will handle “hello world” concatenation
 >
 > .NET 6 is currently the primary implementation, and the one that's the focus of ongoing development. .NET 6 is built on a single code base that supports multiple platforms and many workloads, such as Windows desktop apps and cross-platform console apps, cloud services, and websites. Some workloads, such as .NET WebAssembly build tools, are available as optional installations.
 
-3. What is CLR?
+3. **What is CLR?**
 
 > The Common Language Runtime (CLR) is the execution environment for a managed program. A CLR is also a virtual machine that not only executes apps but also generates and compiles code on-the-fly using a JIT compiler (IL code -> machine code).
 > The CLR is an implementation of the CLI (Common Language Infrastructure) specification. Code that runs under the CLR is called managed code. CLR is responsible for:
@@ -60,7 +60,7 @@ Create a .NET standard library which will handle “hello world” concatenation
 > - thread management;
 > - calling methods;
 
-4. Why is .NET 5 a bit of a special version?
+4. **Why is .NET 5 a bit of a special version?**
 
 > It was released in November 2020, with the goal of unifying development for desktop, web, cloud, mobile, gaming, IoT, and AI. The earlier setup's goal was to produce a single, cross-platform .NET runtime and framework that integrated the best features of .NET Core, .NET Framework, Xamarin, and Mono.
 >
@@ -68,6 +68,33 @@ Create a .NET standard library which will handle “hello world” concatenation
 >
 > In addition, one of the important new features is support for ARM64 that will allow .NET 5 applications to run natively on Windows and ARM hardware (such as new Apple M1 ARM-based processors). This means that is has the widest OS support of any .NET version before.
 
-5. Which technologies are supported by the .NET framework?
-2. Does cross-platform development is possible in .NET? What about cross-platform UI?
-3. What does the multitargeting term mean?
+5. **Which technologies are supported by the .NET framework?**
+
+> .NET Framework is a technology that supports building and running Windows apps and web services.
+> You can use .NET Framework to develop the following types of apps and services:
+> - Console apps
+> - Windows GUI apps (Windows Forms).
+> - Windows Presentation Foundation (WPF) apps.
+> - ASP.NET apps.
+> - Windows services.
+> - Service-oriented apps using Windows Communication Foundation (WCF).
+> - Workflow-enabled apps using Windows Workflow Foundation (WF).
+
+6. **Is cross-platform development possible in .NET? What about cross-platform UI?**
+
+> Yes, it is, with .NET 5+ (and .NET Core). Cross-platform UI is also possible - Xamarin, MAUI and MAUI with Blazor Hybrid to build cross-platform desktop and mobile apps.
+
+7. **What does the multitargeting term mean?**
+
+> For example, sometimes you need to access framework-specific APIs from your libraries. The best way to call framework-specific APIs is using multi-targeting, which builds your project for many .NET target frameworks rather than for just one.
+>
+> use a project file's TargetFrameworks property when multi-targeting.
+>
+>       <Project Sdk="Microsoft.NET.Sdk">
+>       <PropertyGroup>
+>           <!-- This project will output netstandard2.0 and net461 assemblies -->
+>           <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+>       </PropertyGroup>
+>       </Project>
+>
+> CONSIDER targeting .NET implementations in addition to .NET Standard
