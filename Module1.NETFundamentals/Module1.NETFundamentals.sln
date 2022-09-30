@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NETCore.ConsoleApp", "NETCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NETFramework.WinFormsApp", "NETFramework.WinFormsApp\NETFramework.WinFormsApp.csproj", "{885025C6-5F12-43E4-A22C-073AC3CFEE33}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NETStandard.Lib", "NETStandard.Lib\NETStandard.Lib.csproj", "{093AC730-1B04-4327-B4D0-469A8A31C1C2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{885025C6-5F12-43E4-A22C-073AC3CFEE33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{885025C6-5F12-43E4-A22C-073AC3CFEE33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{885025C6-5F12-43E4-A22C-073AC3CFEE33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{093AC730-1B04-4327-B4D0-469A8A31C1C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{093AC730-1B04-4327-B4D0-469A8A31C1C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{093AC730-1B04-4327-B4D0-469A8A31C1C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{093AC730-1B04-4327-B4D0-469A8A31C1C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

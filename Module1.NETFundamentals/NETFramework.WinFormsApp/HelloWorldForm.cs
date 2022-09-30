@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using NETStandard.Lib;
 
 namespace NETFramework.WinFormsApp
 {
@@ -12,11 +13,6 @@ namespace NETFramework.WinFormsApp
             outputTextbox.Text = OutPutPlaceholder;
         }
 
-        private static string GetOutputMessage(string userName)
-        {
-            return $"Hello, {userName}";
-        }
-
         private void InputTextBox_TextChanged(object sender, System.EventArgs e)
         {
             if (!(sender is TextBox textBox))
@@ -24,7 +20,7 @@ namespace NETFramework.WinFormsApp
                 return;
             }
 
-            string message = string.IsNullOrWhiteSpace(textBox.Text) ? OutPutPlaceholder : GetOutputMessage(textBox.Text);
+            string message = string.IsNullOrWhiteSpace(textBox.Text) ? OutPutPlaceholder : Utils.GetOutputMessage(textBox.Text);
             outputTextbox.Text = message;
         }
     }

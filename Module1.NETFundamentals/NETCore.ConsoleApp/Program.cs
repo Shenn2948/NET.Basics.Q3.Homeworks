@@ -1,4 +1,5 @@
 ﻿using System;
+using NETStandard.Lib;
 
 namespace NETCore.ConsoleApp
 {
@@ -12,12 +13,7 @@ namespace NETCore.ConsoleApp
                 return;
             }
 
-            Console.WriteLine(GetOutputMessage(args[0]));
-        }
-
-        private static string GetOutputMessage(string userName)
-        {
-            return $"Hello, {userName}";
+            Console.WriteLine(Utils.GetOutputMessage(args[0]));
         }
     }
 }
