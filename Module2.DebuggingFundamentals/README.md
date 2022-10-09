@@ -77,7 +77,7 @@ In provided project fix Utilities.Sort and Utilities.IndexOf methods so that the
 > - The same folder as the DLL or .exe file.
 > - Any locations specified in the debugger options for symbol files
 
-1. **What is symbol server?**
+7. **What is symbol server?**
 
 > Visual Studio can download debugging symbol files from symbol servers that implement the *symsrv* protocol. Visual Studio Team Foundation Server and the Debugging Tools for Windows are two tools that can use symbol servers.
 >
