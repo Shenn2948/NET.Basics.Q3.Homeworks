@@ -20,6 +20,13 @@ var path = AnsiConsole.Prompt(
 WriteDivider("Result");
 
 var fileSystemVisitor = new FileSystemVisitor(d => d.Name.Length == 5, f => f.Name.Length < 20);
+fileSystemVisitor.SearchStarted += (sender, args) => Console.WriteLine("start");
+fileSystemVisitor.SearchFinished += (sender, args) => Console.WriteLine("finish");
+fileSystemVisitor.DirectoryFound += (folder) =>
+{
+    Console.WriteLine($"found directory: {folder.Name}");
+    return new FileSystemItemFoundEventArgs { AbortSearch = false, ExcludeFromResult = folder.Name == "test1" };
+};
 var folder = new Folder(path);
 var result = fileSystemVisitor.Traverse(folder);
 
