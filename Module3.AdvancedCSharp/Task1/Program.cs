@@ -20,7 +20,8 @@ var path = AnsiConsole.Prompt(
 WriteDivider("Result");
 
 var fileSystemVisitor = new FileSystemVisitor(d => d.Name.Length == 5, f => f.Name.Length < 20);
-var result = fileSystemVisitor.Traverse(path);
+var folder = new Folder(path);
+var result = fileSystemVisitor.Traverse(folder);
 
 foreach (var item in result)
 {

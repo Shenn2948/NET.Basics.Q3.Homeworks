@@ -2,45 +2,44 @@ namespace Task1;
 
 public class FileSystemVisitor
 {
-    private readonly Func<DirectoryInfo, bool>? _folderPredicate;
-    private readonly Func<FileInfo, bool>? _filePredicate;
+    private readonly Func<IFolder, bool> _folderPredicate;
+    private readonly Func<File, bool> _filePredicate;
 
-    public FileSystemVisitor(Func<DirectoryInfo, bool>? folderPredicate = null,
-                             Func<FileInfo, bool>? filePredicate = null)
+    public FileSystemVisitor(Func<IFolder, bool>? folderPredicate = null,
+                             Func<File, bool>? filePredicate = null)
     {
-        _folderPredicate = folderPredicate;
-        _filePredicate = filePredicate;
+        _folderPredicate = folderPredicate ?? ((folder) => true);
+        _filePredicate = filePredicate ?? ((file) => true);
     }
 
-    public IEnumerable<Folder> Traverse(string path)
+    public IEnumerable<FolderViewModel> Traverse(IFolder folder)
     {
-        var directory = new DirectoryInfo(path);
-        if (!directory.Exists)
+        if (!folder.Exists)
         {
-            Console.WriteLine($"Directory with path: {path} does not exist.");
+            Console.WriteLine($"Provided directory does not exist in filesystem.");
             yield break;
         }
 
-        var stack = new Stack<Folder>();
-        var root = Folder.MapFromDirectoryInfo(directory);
+        var stack = new Stack<FolderViewModel>();
+        var root = new FolderViewModel { Folder = folder };
         stack.Push(root);
 
         while (stack.Count > 0)
         {
-            var currentNode = stack.Pop();
-            var foldersByParent = currentNode.DirectoryInfo.GetDirectories()
-                                                           .Where(_folderPredicate)
-                                                           .Select(Folder.MapFromDirectoryInfo);
+            FolderViewModel currentNode = stack.Pop();
+            IEnumerable<FolderViewModel> foldersByParent = currentNode.Folder.GetFolders()
+                                                                             .Where(_folderPredicate)
+                                                                             .Select(folder => new FolderViewModel { Folder = folder });
 
-            foreach (var childFolder in foldersByParent)
+            foreach (FolderViewModel childFolder in foldersByParent)
             {
                 currentNode.Directories.Add(childFolder);
                 stack.Push(childFolder);
             }
 
-            currentNode.Files = currentNode.DirectoryInfo.GetFiles()
-                                                         .Where(_filePredicate)
-                                                         .ToList();
+            currentNode.Files = currentNode.Folder.GetFiles()
+                                                  .Where(_filePredicate)
+                                                  .ToList();
 
             yield return currentNode;
         }
