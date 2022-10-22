@@ -1,31 +1,24 @@
 using Task1.Interfaces;
+using File = Task1.Models.File;
 
-namespace Task1.Models;
+namespace Task1.Tests.Models;
 
-public class Folder : IFolder
+public record MockFolder(string Name) : IFolder
 {
-    private readonly DirectoryInfo _directory;
+    public bool Exists => true;
 
-    public Folder(string path)
-    {
-        _directory = new DirectoryInfo(path);
+    public List<MockFolder> SubFolders { get; set; } = new();
 
-        Exists = _directory.Exists;
-        Name = _directory.Name;
-    }
-
-    public string Name { get; }
-
-    public bool Exists { get; }
+    public List<File> Files { get; set; } = new();
 
     public IEnumerable<File> GetFiles()
     {
-        return _directory.GetFiles().Select(file => new File(file.Name, this));
+        return Files;
     }
 
     public IEnumerable<IFolder> GetFolders()
     {
-        return _directory.GetDirectories().Select(dir => new Folder(dir.FullName));
+        return SubFolders;
     }
 
     public override string ToString()

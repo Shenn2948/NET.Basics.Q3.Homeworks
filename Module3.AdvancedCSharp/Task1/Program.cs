@@ -21,13 +21,21 @@ string path = AnsiConsole.Prompt(
 
 WriteDivider("Result");
 
-var fileSystemVisitor = new FileSystemVisitor(d => d.Name.Length == 5, f => f.Name.Length < 20);
+var fileSystemVisitor = new FileSystemVisitor();
+//var fileSystemVisitor = new FileSystemVisitor(d => d.Name.Length == 5, f => f.Name.Length < 20);
 fileSystemVisitor.SearchStarted += (sender, args) => Console.WriteLine("start");
 fileSystemVisitor.SearchFinished += (sender, args) => Console.WriteLine("finish");
 fileSystemVisitor.DirectoryFound += (folder) =>
 {
     Console.WriteLine($"found directory: {folder.Name}");
-    return new FileSystemItemFoundEventArgs { AbortSearch = false, ExcludeFromResult = folder.Name == "test1" };
+    //return new FileSystemItemFoundEventArgs { AbortSearch = false, ExcludeFromResult = folder.Name == "test1" };
+    return FileSystemItemFoundEventArgs.Empty;
+};
+fileSystemVisitor.FileFound += (file) =>
+{
+    Console.WriteLine($"found file: {file.Name}");
+    //return new FileSystemItemFoundEventArgs { AbortSearch = false, ExcludeFromResult = folder.Name == "test1" };
+    return FileSystemItemFoundEventArgs.Empty;
 };
 var folder = new Folder(path);
 var result = fileSystemVisitor.Traverse(folder);
@@ -36,6 +44,8 @@ foreach (var item in result)
 {
     Console.WriteLine(item);
 }
+
+Console.ReadKey();
 
 static void WriteDivider(string text)
 {

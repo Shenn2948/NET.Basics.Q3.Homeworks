@@ -9,4 +9,6 @@ public class FileSystemItemFoundEventArgs
     public bool AbortSearch { get; set; }
 
     public bool ExcludeFromResult { get; set; }
+
+    public static FileSystemItemFoundEventArgs Empty = new ();
 }

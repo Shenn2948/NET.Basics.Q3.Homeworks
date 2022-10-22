@@ -1,6 +1,6 @@
+using System.Data;
 using Task1.Delegates;
 using Task1.Interfaces;
-using Task1.ViewModels;
 using File = Task1.Models.File;
 
 namespace Task1;
@@ -16,9 +16,9 @@ public class FileSystemVisitor
         _filePredicate = filePredicate;
     }
 
-    public event EventHandler? SearchStarted;
+    public event EventHandler<EventArgs>? SearchStarted;
 
-    public event EventHandler? SearchFinished;
+    public event EventHandler<EventArgs>? SearchFinished;
 
     public event FileSystemItemFoundHandler<IFolder>? DirectoryFound;
 
@@ -28,43 +28,55 @@ public class FileSystemVisitor
 
     public event FileSystemItemFoundHandler<File>? FilteredFileFound;
 
-    public IEnumerable<FolderViewModel> Traverse(IFolder folder)
+    public IEnumerable<IFileSystemItem> Traverse(IFolder root)
     {
-        if (!folder.Exists)
+        if (!root.Exists)
         {
             Console.WriteLine("Provided directory does not exist in filesystem.");
             yield break;
         }
 
-        var stack = new Stack<FolderViewModel>();
-        var root = new FolderViewModel { Folder = folder };
+        var stack = new Stack<IFolder>();
         stack.Push(root);
 
         SearchStarted?.Invoke(this, EventArgs.Empty);
 
         while (stack.Count > 0)
         {
-            FolderViewModel currentNode = stack.Pop();
-            IEnumerable<IFolder> foldersByParent = currentNode.Folder.GetFolders();
-            FileSystemItemsFilterArgs<IFolder> folderArgs = BuildFolderFilterArgs(currentNode, stack);
+            IFolder currentFolder = stack.Pop();
+            IEnumerable<IFolder> foldersByParent = currentFolder.GetFolders();
 
-            if (!TryFilterItems(foldersByParent, folderArgs))
+            if (!TryFilterItems(foldersByParent, BuildFolderFilterArgs(stack)))
             {
+                yield return currentFolder;
+
+                foreach (IFolder folder in stack)
+                {
+                    yield return folder;
+                }
+
                 yield break;
             }
 
-            IEnumerable<File> files = currentNode.Folder.GetFiles();
-            var finalFileList = new List<File>();
-            FileSystemItemsFilterArgs<File> fileArgs = BuildFileFilterArgs(finalFileList);
+            IEnumerable<File> files = currentFolder.GetFiles();
+            var filteredFiles = new List<File>();
 
-            if (!TryFilterItems(files, fileArgs))
+            if (!TryFilterItems(files, BuildFileFilterArgs(filteredFiles)))
             {
+                foreach (File folderFile in filteredFiles)
+                {
+                    yield return folderFile;
+                }
+
                 yield break;
             }
 
-            currentNode.Files = finalFileList;
+            yield return currentFolder;
 
-            yield return currentNode;
+            foreach (File folderFile in filteredFiles)
+            {
+                yield return folderFile;
+            }
         }
 
         SearchFinished?.Invoke(this, EventArgs.Empty);
@@ -75,56 +87,48 @@ public class FileSystemVisitor
         foreach (T item in items)
         {
             var beforeFilter = args.FoundHandler?.Invoke(item);
-            if (beforeFilter?.AbortSearch ?? false)
-            {
-                return false;
-            }
+            bool notExclude = !beforeFilter?.ExcludeFromResult ?? true;
+            bool abort = beforeFilter?.AbortSearch ?? false;
 
-            bool excludeFromResult = beforeFilter?.ExcludeFromResult ?? false;
             bool isFiltered = args.Predicate?.Invoke(item) ?? false;
-            if (excludeFromResult || isFiltered)
+
+            if (isFiltered)
             {
-                continue;
+                var filteredFoundArgs = args.FilteredFoundHandler?.Invoke(item);
+                notExclude = !filteredFoundArgs?.ExcludeFromResult ?? true;
+                abort = filteredFoundArgs?.AbortSearch ?? false;
             }
 
-            var afterFilter = args.FilteredFoundHandler?.Invoke(item);
-            if (afterFilter?.AbortSearch ?? false)
+            if (notExclude)
+            {
+                args.CallBack?.Invoke(item);
+            }
+
+            if (abort)
             {
                 return false;
             }
-
-            if (afterFilter?.ExcludeFromResult ?? false)
-            {
-                continue;
-            }
-
-            args.CallBack?.Invoke(item);
         }
 
         return true;
     }
 
-    private FileSystemItemsFilterArgs<File> BuildFileFilterArgs(ICollection<File> finalFileList)
+    private FileSystemItemsFilterArgs<File> BuildFileFilterArgs(ICollection<File> folderFiles)
     {
         return new FileSystemItemsFilterArgs<File>
         {
-            Predicate = _filePredicate, FoundHandler = FileFound, FilteredFoundHandler = FilteredFileFound, CallBack = finalFileList.Add
+            Predicate = _filePredicate, FoundHandler = FileFound, FilteredFoundHandler = FilteredFileFound, CallBack = folderFiles.Add
         };
     }
 
-    private FileSystemItemsFilterArgs<IFolder> BuildFolderFilterArgs(FolderViewModel currentNode, Stack<FolderViewModel> stack)
+    private FileSystemItemsFilterArgs<IFolder> BuildFolderFilterArgs(Stack<IFolder> stack)
     {
         return new FileSystemItemsFilterArgs<IFolder>
         {
             Predicate = _folderPredicate,
             FoundHandler = DirectoryFound,
             FilteredFoundHandler = FilteredDirectoryFound,
-            CallBack = childFolder =>
-            {
-                var childFolderVM = new FolderViewModel { Folder = childFolder };
-                currentNode.Directories.Add(childFolderVM);
-                stack.Push(childFolderVM);
-            }
+            CallBack = stack.Push
         };
     }
 }
