@@ -1,4 +1,6 @@
-namespace Task1;
+using Task1.Interfaces;
+
+namespace Task1.Models;
 
 public class Folder : IFolder
 {

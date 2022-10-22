@@ -1,6 +1,8 @@
-namespace Task1;
+using Task1.Interfaces;
 
-public class File
+namespace Task1.Models;
+
+public class File: IFileSystemItem
 {
     public required string Name { get; init; }
 }

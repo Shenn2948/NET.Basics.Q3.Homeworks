@@ -1,4 +1,8 @@
-namespace Task1;
+using Task1.Interfaces;
+using Task1.Models;
+using File = Task1.Models.File;
+
+namespace Task1.ViewModels;
 
 public class FolderViewModel
 {
@@ -7,10 +11,6 @@ public class FolderViewModel
     public List<FolderViewModel> Directories { get; init; } = new();
 
     public List<File> Files { get; set; } = new();
-
-    public bool HasDirectories => Directories.Count > 0;
-
-    public bool HasFiles => Files.Count > 0;
 
     public override string ToString()
     {

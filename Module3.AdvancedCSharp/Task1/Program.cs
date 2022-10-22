@@ -1,9 +1,11 @@
 ﻿using Spectre.Console;
 using Task1;
+using Task1.Delegates;
+using Task1.Models;
 
 WriteDivider("Input");
 
-var path = AnsiConsole.Prompt(
+string path = AnsiConsole.Prompt(
     new TextPrompt<string>("[grey][[path]][/] Provide a [green]path[/] to a specific folder (e.g. C:/temp): ")
     .PromptStyle("green")
     .ValidationErrorMessage("[red]That's not a valid age[/]")

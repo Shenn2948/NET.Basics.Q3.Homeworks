@@ -81,7 +81,7 @@ NB! Scoreboard:
 >
 > `Covariance` and `contravariance` are terms that refer to the ability to use a more derived type (more specific) or a less derived type (less specific) than originally specified. Generic type parameters support covariance and contravariance to provide greater flexibility in assigning and using generic types.
 >
-> - Covariance
+> - Covariance (out)
 >
 >   Enables you to use a `more derived` type than originally specified.
 >
@@ -90,7 +90,7 @@ NB! Scoreboard:
 >       IEnumerable<Derived> d = new();
 >       IEnumerable<Base> b = d;
 >
-> - Contravariance
+> - Contravariance (in)
 >
 >   Enables you to use a `more generic (less derived)` type than originally specified.
 >
