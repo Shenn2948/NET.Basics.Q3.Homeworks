@@ -1,36 +1,38 @@
 ﻿using System;
+using System.Linq;
 using Task3.DoNotChange;
+using Task3.Exceptions;
 
-namespace Task3
+namespace Task3;
+
+public class UserTaskService
 {
-    public class UserTaskService
+    private readonly IUserDao _userDao;
+
+    public UserTaskService(IUserDao userDao)
     {
-        private readonly IUserDao _userDao;
+        _userDao = userDao;
+    }
 
-        public UserTaskService(IUserDao userDao)
+    public void AddTaskForUser(int userId, UserTask task)
+    {
+        if (userId < 0)
         {
-            _userDao = userDao;
+            throw new InvalidUserException("action_result", "Invalid userId");
         }
 
-        public int AddTaskForUser(int userId, UserTask task)
+        var user = _userDao.GetUser(userId);
+        if (user == null)
         {
-            if (userId < 0)
-                return -1;
-
-            var user = _userDao.GetUser(userId);
-            if (user == null)
-                return -2;
-
-            var tasks = user.Tasks;
-            foreach (var t in tasks)
-            {
-                if (string.Equals(task.Description, t.Description, StringComparison.OrdinalIgnoreCase))
-                    return -3;
-            }
-
-            tasks.Add(task);
-
-            return 0;
+            throw new UserNotFoundException("action_result", "User not found");
         }
+
+        var tasks = user.Tasks;
+        if (tasks.Any(t => string.Equals(task.Description, t.Description, StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new UsersTaskHasConflictException("action_result", "The task already exists");
+        }
+
+        tasks.Add(task);
     }
 }
