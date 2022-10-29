@@ -21,6 +21,7 @@ namespace Task2.Tests
         [TestCase("2147483647", ExpectedResult = int.MaxValue)]
         [TestCase("-12034", ExpectedResult = -12034)]
         [TestCase("-12034    ", ExpectedResult = -12034)]
+        [TestCase("    -12034", ExpectedResult = -12034)]
         public int Parse_ValidNumberString_ReturnsInt32Value(string stringValue)
         {
             return _parser.Parse(stringValue);
@@ -45,6 +46,7 @@ namespace Task2.Tests
         [TestCase("-+12034")]
         [TestCase("+-12034")]
         [TestCase("0-12034")]
+        [TestCase("-12  034")]
         public void Parse_InvalidNumberFormat_ThrowFormatException(string stringValue)
         {
             Assert.That(() => _parser.Parse(stringValue), Throws.InstanceOf<FormatException>());
