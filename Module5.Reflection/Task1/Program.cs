@@ -1,4 +1,5 @@
 ﻿using Task1;
+using Task1.Models;
 
 var mockSettings = new Settings()
 {
@@ -9,9 +10,11 @@ var mockSettings = new Settings()
     ResponseTimeoutSeconds = 5
 };
 
-var settings = ConfigurationComponentBase.LoadSettings();
+var configuration = new ConfigurationComponentBase();
 
-ConfigurationComponentBase.SaveSettings(mockSettings);
+var settings = configuration.LoadSettings();
+
+configuration.SaveSettings(mockSettings);
 
 Console.WriteLine("press any key to exit...");
 Console.ReadKey();

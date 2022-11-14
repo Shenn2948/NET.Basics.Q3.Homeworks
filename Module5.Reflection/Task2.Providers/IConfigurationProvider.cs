@@ -1,4 +1,4 @@
-namespace Task1;
+namespace Task2.Providers;
 
 public interface IConfigurationProvider
 {

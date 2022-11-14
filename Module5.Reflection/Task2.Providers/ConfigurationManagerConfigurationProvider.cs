@@ -1,6 +1,6 @@
 using System.Configuration;
 
-namespace Task1;
+namespace Task2.Providers;
 
 public class ConfigurationManagerConfigurationProvider : IConfigurationProvider
 {

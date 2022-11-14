@@ -1,4 +1,6 @@
-namespace Task1;
+using Task1.Attributes;
+
+namespace Task1.Models;
 
 public class Settings
 {

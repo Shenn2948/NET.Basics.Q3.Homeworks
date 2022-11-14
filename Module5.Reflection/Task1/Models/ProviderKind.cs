@@ -1,4 +1,4 @@
-namespace Task1;
+namespace Task1.Models;
 
 public enum ProviderKind
 {

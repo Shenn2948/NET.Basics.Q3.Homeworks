@@ -1,10 +1,13 @@
 using System.Reflection;
+using Task1.Attributes;
+using Task1.Models;
+using Task2.Providers;
 
 namespace Task1;
 
 public class ConfigurationComponentBase
 {
-    private static readonly Dictionary<Type, Func<string, object>> TypeMapping = new()
+    private readonly Dictionary<Type, Func<string, object>> _typeMapping = new()
     {
         {
             typeof(int), (x) =>
@@ -42,30 +45,33 @@ public class ConfigurationComponentBase
         }
     };
 
-    public static void SaveSettings(Settings settings)
-    {
-        Dictionary<PropertyInfo, IConfigurationProvider> map = GetPropertyInfoProviderMap();
+    private readonly Dictionary<PropertyInfo, IConfigurationProvider> _providerMap;
 
-        foreach ((PropertyInfo propertyInfo, IConfigurationProvider provider) in map)
+    public ConfigurationComponentBase()
+    {
+        _providerMap = GetPropertyInfoProviderMap();
+    }
+
+    public void SaveSettings(Settings settings)
+    {
+        foreach ((PropertyInfo propertyInfo, IConfigurationProvider provider) in _providerMap)
         {
-            if (TypeMapping.ContainsKey(propertyInfo.PropertyType))
+            if (_typeMapping.ContainsKey(propertyInfo.PropertyType))
             {
                 provider.SaveSetting(propertyInfo.Name, propertyInfo.GetValue(settings));
             }
         }
     }
 
-    public static Settings LoadSettings()
+    public Settings LoadSettings()
     {
         Settings settings = new();
 
-        Dictionary<PropertyInfo, IConfigurationProvider> map = GetPropertyInfoProviderMap();
-
-        foreach ((PropertyInfo propertyInfo, IConfigurationProvider provider) in map)
+        foreach ((PropertyInfo propertyInfo, IConfigurationProvider provider) in _providerMap)
         {
             string settingValue = provider.LoadSetting(propertyInfo.Name);
 
-            if (!TypeMapping.TryGetValue(propertyInfo.PropertyType, out var mapFunc))
+            if (!_typeMapping.TryGetValue(propertyInfo.PropertyType, out var mapFunc))
             {
                 continue;
             }
@@ -87,8 +93,8 @@ public class ConfigurationComponentBase
 
         IEnumerable<PropertyInfo> properties = typeof(Settings).GetProperties(BindingFlags.Instance | BindingFlags.Public)
                                                                .Where(prop => prop.IsDefined(typeof(ConfigurationItemAttribute), false));
-        Assembly asm = Assembly.GetExecutingAssembly();
-        Type[] types = GetTypesThatImplementIConfigurationProvider(asm).ToArray();
+        IEnumerable<Assembly> assemblies = GetAssembliesToCheckForConfigProviders();
+        Type[] types = assemblies.Select(GetTypesThatImplementIConfigurationProvider).SelectMany(type => type).ToArray();
 
         foreach (PropertyInfo propertyInfo in properties)
         {
@@ -104,6 +110,16 @@ public class ConfigurationComponentBase
         }
 
         return providerMap;
+    }
+
+    private static IEnumerable<Assembly> GetAssembliesToCheckForConfigProviders()
+    {
+        foreach (string file in Directory.GetFiles(@".\Plugins", "*.dll"))
+        {
+            yield return Assembly.LoadFrom(Directory.GetCurrentDirectory() + file);
+        }
+
+        yield return Assembly.GetExecutingAssembly();
     }
 
     private static IEnumerable<Type> GetTypesThatImplementIConfigurationProvider(Assembly assembly)

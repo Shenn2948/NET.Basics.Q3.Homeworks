@@ -1,6 +1,8 @@
-namespace Task1;
+using Task1.Models;
 
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+namespace Task1.Attributes;
+
+[AttributeUsage(AttributeTargets.Property)]
 public class ConfigurationItemAttribute : Attribute
 {
     public ConfigurationItemAttribute(string settingName, ProviderKind providerKind)
