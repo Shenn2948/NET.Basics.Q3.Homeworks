@@ -9,6 +9,8 @@ var mockSettings = new Settings()
     ResponseTimeoutSeconds = 5
 };
 
+var settings = ConfigurationComponentBase.LoadSettings();
+
 ConfigurationComponentBase.SaveSettings(mockSettings);
 
 Console.WriteLine("press any key to exit...");

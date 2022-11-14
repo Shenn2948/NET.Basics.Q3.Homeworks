@@ -4,36 +4,106 @@ namespace Task1;
 
 public class ConfigurationComponentBase
 {
+    private static readonly Dictionary<Type, Func<string, object>> TypeMapping = new()
+    {
+        {
+            typeof(int), (x) =>
+            {
+                if (int.TryParse(x, out int result))
+                {
+                    return result;
+                }
+
+                return null;
+            }
+        },
+        {
+            typeof(float), (x) =>
+            {
+                if (float.TryParse(x, out float result))
+                {
+                    return result;
+                }
+
+                return null;
+            }
+        },
+        { typeof(string), (x) => x },
+        {
+            typeof(TimeSpan), (x) =>
+            {
+                if (TimeSpan.TryParse(x, out var result))
+                {
+                    return result;
+                }
+
+                return null;
+            }
+        }
+    };
+
     public static void SaveSettings(Settings settings)
     {
-        // get all settings properties which marked with [ConfigurationItem] attribute
-        // for-each property get provider type from the [ConfigurationItem] attribute
-        //    check this assembly for providers of IConfigurationProvider type
-        //    check other assembly (task 2)
-        //    create provider instance of IConfigurationProvider type
+        Dictionary<PropertyInfo, IConfigurationProvider> map = GetPropertyInfoProviderMap();
 
-        //    save setting prop value using provider instance
-        ProcessSettings(settings, (provider, propertyInfo) =>
+        foreach ((PropertyInfo propertyInfo, IConfigurationProvider provider) in map)
         {
-
-            provider.SaveSetting(propertyInfo.Name, propertyInfo.GetValue(settings));
-        });
+            if (TypeMapping.ContainsKey(propertyInfo.PropertyType))
+            {
+                provider.SaveSetting(propertyInfo.Name, propertyInfo.GetValue(settings));
+            }
+        }
     }
 
-    public static void LoadSettings(Settings settings)
+    public static Settings LoadSettings()
     {
-        // get all settings properties which marked with [ConfigurationItem] attribute
-        // for-each property get provider type from the [ConfigurationItem] attribute
-        //    check this assembly for providers of IConfigurationProvider type
-        //    check other assembly (task 2)
-        //    create provider instance of IConfigurationProvider type
+        Settings settings = new();
 
-        //    load setting prop value using provider instance
-        ProcessSettings(settings, (provider, propertyInfo) =>
+        Dictionary<PropertyInfo, IConfigurationProvider> map = GetPropertyInfoProviderMap();
+
+        foreach ((PropertyInfo propertyInfo, IConfigurationProvider provider) in map)
         {
-            var setting = provider.LoadSetting(propertyInfo.Name);
-            propertyInfo.SetValue(settings, setting);
-        });
+            string settingValue = provider.LoadSetting(propertyInfo.Name);
+
+            if (!TypeMapping.TryGetValue(propertyInfo.PropertyType, out var mapFunc))
+            {
+                continue;
+            }
+
+            object result = mapFunc(settingValue);
+
+            if (result != null)
+            {
+                propertyInfo.SetValue(settings, result);
+            }
+        }
+
+        return settings;
+    }
+
+    private static Dictionary<PropertyInfo, IConfigurationProvider> GetPropertyInfoProviderMap()
+    {
+        Dictionary<PropertyInfo, IConfigurationProvider> providerMap = new();
+
+        IEnumerable<PropertyInfo> properties = typeof(Settings).GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                                                               .Where(prop => prop.IsDefined(typeof(ConfigurationItemAttribute), false));
+        Assembly asm = Assembly.GetExecutingAssembly();
+        Type[] types = GetTypesThatImplementIConfigurationProvider(asm).ToArray();
+
+        foreach (PropertyInfo propertyInfo in properties)
+        {
+            var attribute = propertyInfo.GetCustomAttribute<ConfigurationItemAttribute>(false);
+            if (attribute == null) continue;
+            IConfigurationProvider providerInstance = GetProviderInstanceByKind(types, attribute.ProviderKind);
+
+            Console.WriteLine($"> Property:'{propertyInfo.Name}', provider kind:'{attribute.ProviderKind}.'");
+
+            if (providerInstance == null) continue;
+
+            providerMap.Add(propertyInfo, providerInstance);
+        }
+
+        return providerMap;
     }
 
     private static IEnumerable<Type> GetTypesThatImplementIConfigurationProvider(Assembly assembly)
@@ -44,34 +114,16 @@ public class ConfigurationComponentBase
     private static Type GetProviderTypeByKind(IEnumerable<Type> types, ProviderKind providerType)
     {
         return types.FirstOrDefault(type => providerType switch
-                {
-                    ProviderKind.File => type == typeof(FileConfigurationProvider),
-                    ProviderKind.ConfigurationManager => type == typeof(ConfigurationManagerConfigurationProvider),
-                    _ => false,
-                });
+        {
+            ProviderKind.File => type == typeof(FileConfigurationProvider),
+            ProviderKind.ConfigurationManager => type == typeof(ConfigurationManagerConfigurationProvider),
+            _ => false,
+        });
     }
 
     private static IConfigurationProvider GetProviderInstanceByKind(IEnumerable<Type> types, ProviderKind providerKind)
     {
         Type providerType = GetProviderTypeByKind(types, providerKind);
         return providerType == null ? null : Activator.CreateInstance(providerType) as IConfigurationProvider;
-    }
-
-    private static void ProcessSettings(Settings settings, Action<IConfigurationProvider, PropertyInfo> onPropertyFound)
-    {
-        IEnumerable<PropertyInfo> properties = settings.GetType()
-                                                       .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                                                       .Where(prop => prop.IsDefined(typeof(ConfigurationItemAttribute), false));
-        Assembly asm = Assembly.GetExecutingAssembly();
-        IEnumerable<Type> types = GetTypesThatImplementIConfigurationProvider(asm);
-
-        foreach (PropertyInfo propertyInfo in properties)
-        {
-            var attribute = propertyInfo.GetCustomAttribute<ConfigurationItemAttribute>(false);
-            IConfigurationProvider providerInstance = GetProviderInstanceByKind(types, attribute.ProviderKind);
-
-            Console.WriteLine($"> Property:'{propertyInfo.Name}', provider kind:'{attribute.ProviderKind}.'");
-            onPropertyFound(providerInstance, propertyInfo);
-        }
     }
 }
