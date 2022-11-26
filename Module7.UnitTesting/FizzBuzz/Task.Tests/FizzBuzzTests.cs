@@ -1,6 +1,3 @@
-using System;
-using System.Reflection;
-
 namespace Task.Tests;
 
 public class FizzBuzzTests
@@ -80,7 +77,7 @@ public class FizzBuzzTests
     [InlineData(6)]
     [InlineData(9)]
     [InlineData(18)]
-    public void GenearateForNumber_Returns_Fizz_InsteadOfNumber_Which_Is_Divisible_By_3(int number)
+    public void GenerateForNumber_Returns_Fizz_InsteadOfNumber_Which_Is_Divisible_By_3(int number)
     {
         // Arrange
         string expected = "Fizz";
@@ -97,7 +94,7 @@ public class FizzBuzzTests
     [InlineData(10)]
     [InlineData(20)]
     [InlineData(25)]
-    public void GenearateForNumber_Returns_Buzz_InsteadOfNumber_Which_Is_Divisible_By_5(int number)
+    public void GenerateForNumber_Returns_Buzz_InsteadOfNumber_Which_Is_Divisible_By_5(int number)
     {
         // Arrange
         string expected = "Buzz";
@@ -114,7 +111,7 @@ public class FizzBuzzTests
     [InlineData(30)]
     [InlineData(45)]
     [InlineData(60)]
-    public void GenearateForNumber_Returns_FizzBuzz_When_Divisible_By_Both_3_And_5(int number)
+    public void GenerateForNumber_Returns_FizzBuzz_When_Divisible_By_Both_3_And_5(int number)
     {
         // Arrange
         string expected = "FizzBuzz";
@@ -131,7 +128,7 @@ public class FizzBuzzTests
     [InlineData(2)]
     [InlineData(4)]
     [InlineData(34)]
-    public void GenearateForNumber_Returns_Number_When_Not_Divisible_By_3_And_5(int number)
+    public void GenerateForNumber_Returns_Number_When_Not_Divisible_By_3_And_5(int number)
     {
         // Arrange
         string expected = number.ToString();
