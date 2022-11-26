@@ -2,10 +2,13 @@
 
 public static class FizzBuzz
 {
-    public static string GenearateForNumber(int number)
+    public static string GenearateForNumber(int number) => number switch
     {
-        throw new NotImplementedException();
-    }
+        int x when (x % 3 == 0 && x % 5 == 0) => "FizzBuzz",
+        int when number % 3 == 0 => "Fizz",
+        int when number % 5 == 0 => "Buzz",
+        _ => number.ToString(),
+    };
 
     public static string[] Generate()
     {
@@ -14,15 +17,7 @@ public static class FizzBuzz
         for (int i = 0; i < arr.Length; i++)
         {
             int number = i + 1;
-
-            string result = number switch
-            {
-                int when number % 3 == 0 => "Fizz",
-                int when number % 5 == 0 => "Buzz",
-                _ => number.ToString(),
-            };
-
-            arr[i] = result;
+            arr[i] = GenearateForNumber(number);
         }
 
         return arr;
