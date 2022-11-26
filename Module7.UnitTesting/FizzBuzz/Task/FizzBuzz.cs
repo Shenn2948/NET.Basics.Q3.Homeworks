@@ -2,6 +2,11 @@
 
 public static class FizzBuzz
 {
+    public static string GenearateForNumber(int number)
+    {
+        throw new NotImplementedException();
+    }
+
     public static string[] Generate()
     {
         var arr = new string[100];
