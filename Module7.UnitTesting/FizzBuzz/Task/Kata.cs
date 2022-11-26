@@ -8,7 +8,15 @@ public static class Kata
 
         for (int i = 0; i < arr.Length; i++)
         {
-            arr[i] = (i + 1).ToString();
+            int number = i + 1;
+
+            string result = number switch
+            {
+                int when number % 3 == 0 => "Fizz",
+                _ => number.ToString(),
+            };
+
+            arr[i] = result;
         }
 
         return arr;

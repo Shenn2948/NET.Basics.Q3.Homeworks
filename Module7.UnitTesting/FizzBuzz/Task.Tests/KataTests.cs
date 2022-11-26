@@ -23,9 +23,9 @@ public class KataTests
     {
         var expected = new string[] { "1", "2", "Fizz", "4", "5", "Fizz" };
 
-        string[] actual = Kata.FizzBuzz();
+        string[] actual = Kata.FizzBuzz()[0..6];
 
-        Assert.Equal(expected, actual[0..6]);
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
