@@ -13,6 +13,7 @@ public static class Kata
             string result = number switch
             {
                 int when number % 3 == 0 => "Fizz",
+                int when number % 5 == 0 => "Buzz",
                 _ => number.ToString(),
             };
 
