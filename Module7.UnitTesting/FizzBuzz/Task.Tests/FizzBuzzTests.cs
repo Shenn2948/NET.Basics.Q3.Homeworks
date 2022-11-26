@@ -1,13 +1,13 @@
 namespace Task.Tests;
 
-public class KataTests
+public class FizzBuzzTests
 {
     [Fact]
     public void Returns_Numbers_From_1_to_100()
     {
         // Arrange
         // Act
-        string[] sut = Kata.FizzBuzz();
+        string[] sut = FizzBuzz.Generate();
 
         // Assert
         foreach (string item in sut)
@@ -29,7 +29,7 @@ public class KataTests
         var indexesWithFizz = new[] { 2, 5 };
 
         // Act
-        string[] actual = Kata.FizzBuzz();
+        string[] actual = FizzBuzz.Generate();
 
         // Assert
         foreach (int index in indexesWithFizz)
@@ -46,7 +46,7 @@ public class KataTests
         var indexesWithBuzz = new[] { 4, 9 };
 
         // Act
-        string[] actual = Kata.FizzBuzz();
+        string[] actual = FizzBuzz.Generate();
 
         // Assert
         foreach (int index in indexesWithBuzz)
@@ -58,5 +58,17 @@ public class KataTests
     [Fact]
     public void Returns_FizzBuzz_InsteadOfNumber_Which_Is_Divisible_By_Both_3_And_5()
     {
+        // Arrange
+        string fizzBuzz = "FizzBuzz";
+        var indexesWithFizzBuzz = new[] { 14 };
+
+        // Act
+        string[] actual = FizzBuzz.Generate();
+
+        // Assert
+        foreach (int index in indexesWithFizzBuzz)
+        {
+            Assert.Equal(actual[index], fizzBuzz);
+        }
     }
 }

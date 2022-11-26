@@ -1,8 +1,8 @@
 ﻿namespace Task;
 
-public static class Kata
+public static class FizzBuzz
 {
-    public static string[] FizzBuzz()
+    public static string[] Generate()
     {
         var arr = new string[100];
 
