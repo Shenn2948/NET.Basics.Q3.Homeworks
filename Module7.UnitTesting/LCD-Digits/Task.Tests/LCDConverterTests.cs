@@ -49,20 +49,12 @@ public class LCDConverterTests
     [InlineData(seven, 7)]
     [InlineData(eight, 8)]
     [InlineData(nine, 9)]
-    [InlineData($"{zero}{space}{one}{space}{two}", 012)]
     [InlineData($"{one}{space}{two}", 12)]
     [InlineData($"{two}{space}{five}{space}{six}{space}{four}", 2564)]
-    public void Convert_Returns_Correct_String_Result(string expected, int input)
+    public void Convert_Returns_Correct_String_Result(string expected, uint input)
     {
         string actual = LCDConverter.Convert(input);
 
         Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    public void Convert_Throws_ArgumentException_When_Input_Is_Less_Than_Zero(int input)
-    {
-        Assert.Throws<ArgumentException>(() => LCDConverter.Convert(input));
     }
 }
