@@ -1,3 +1,5 @@
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
 namespace Task.Tests;
 
 public class OddEvenTests
@@ -20,12 +22,12 @@ public class OddEvenTests
             }
         }
     }
-    
+
     [Fact]
     public void Returns_Odd_InsteadOfNumber_Which_Is_Divisible_By_2()
     {
         // Arrange
-        string expected = "Odd";
+        string expected = "Even";
         var indexesWithOdd = new[] { 3, 5 };
 
         // Act
@@ -42,7 +44,7 @@ public class OddEvenTests
     public void Returns_Even_InsteadOfNumber_Which_Is_Not_Divisible_By_2_And_Itself()
     {
         // Arrange
-        string expected = "Even";
+        string expected = "Odd";
         var indexesWithOdd = new[] { 8, 14 };
 
         // Act
@@ -122,5 +124,13 @@ public class OddEvenTests
 
         // Assert
         Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(101)]
+    public void GenerateForNumber_Throws_ArgumentOutOfRangeException_When_Number_Is_Less_Than_1_And_Greater_Than_100(int number)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => OddEven.GenerateForNumber(number));
     }
 }

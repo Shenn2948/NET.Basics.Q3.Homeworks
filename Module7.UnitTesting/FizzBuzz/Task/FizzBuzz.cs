@@ -2,7 +2,7 @@
 
 public static class FizzBuzz
 {
-    public static string GenearateForNumber(int number) => number switch
+    public static string GenerateForNumber(int number) => number switch
     {
         int x when (x % 3 == 0 && x % 5 == 0) => "FizzBuzz",
         int when number % 3 == 0 => "Fizz",
@@ -17,7 +17,7 @@ public static class FizzBuzz
         for (int i = 0; i < arr.Length; i++)
         {
             int number = i + 1;
-            arr[i] = GenearateForNumber(number);
+            arr[i] = GenerateForNumber(number);
         }
 
         return arr;
