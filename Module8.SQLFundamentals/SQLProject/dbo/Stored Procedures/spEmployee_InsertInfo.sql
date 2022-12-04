@@ -30,8 +30,6 @@ BEGIN
 	INSERT INTO Person(FirstName, LastName) VALUES(@FirstName, @LastName)
 	SET @PersonId = @@IDENTITY;
 
-	INSERT INTO Company(Name, AddressId) VALUES(@CompanyName, @AddressId)
-
 	INSERT INTO Employee(AddressId, PersonId, CompanyName, Position, EmployeeName)
 	VALUES(@AddressId, @PersonId, @CompanyName, @Position, @EmployeeName);
 END
