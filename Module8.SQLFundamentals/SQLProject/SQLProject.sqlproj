@@ -73,6 +73,7 @@
     <Build Include="dbo\Views\EmployeeInfo.sql" />
     <Build Include="dbo\Stored Procedures\spEmployee_InsertInfo.sql" />
     <Build Include="dbo\Triggers\TR_Employee_CreateCompanyOnInsert.sql" />
+    <Build Include="dbo\Scripts\test_spEmployee_InsertInfo.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PublishLocations\LocalDemoDB.publish.xml" />
