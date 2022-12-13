@@ -24,18 +24,17 @@ namespace BrainstormSessions.Controllers
             _logger.Debug("Index() called with id:{0}", id);
             if (!id.HasValue)
             {
-                _logger.Warning("Redirect to action: {0}, controller:{1}", nameof(Index), "Home");
+                _logger.Warning("Passed parameter 'id' was null. Redirect to action: {0}, controller:{1}", nameof(Index), "Home");
                 return RedirectToAction(actionName: nameof(Index), controllerName: "Home");
             }
 
             var session = await _sessionRepository.GetByIdAsync(id.Value);
             if (session == null)
             {
-                _logger.Warning("Session not found.");
+                _logger.Error("Session not found.");
                 return Content("Session not found.");
             }
 
-            _logger.Debug("Found session with id:{0}", id);
             var viewModel = new StormSessionViewModel()
             {
                 DateCreated = session.DateCreated,

@@ -7,11 +7,14 @@ using BrainstormSessions.Core.Interfaces;
 using BrainstormSessions.Core.Model;
 using Microsoft.AspNetCore.Mvc;
 
+using Serilog;
+
 namespace BrainstormSessions.Api
 {
     public class IdeasController : ControllerBase
     {
         private readonly IBrainstormSessionRepository _sessionRepository;
+        private readonly ILogger _logger = Log.Logger;
 
         public IdeasController(IBrainstormSessionRepository sessionRepository)
         {
@@ -44,6 +47,7 @@ namespace BrainstormSessions.Api
         {
             if (!ModelState.IsValid)
             {
+                _logger.Error("Invalid model state.");
                 return BadRequest(ModelState);
             }
 
@@ -101,6 +105,7 @@ namespace BrainstormSessions.Api
         {
             if (!ModelState.IsValid)
             {
+                _logger.Error("Invalid model state.");
                 return BadRequest(ModelState);
             }
 

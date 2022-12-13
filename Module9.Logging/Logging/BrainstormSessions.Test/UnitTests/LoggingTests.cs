@@ -1,19 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
 using System.Threading.Tasks;
 
 using BrainstormSessions.Api;
 using BrainstormSessions.Controllers;
 using BrainstormSessions.Core.Interfaces;
 using BrainstormSessions.Core.Model;
-
-using log4net.Appender;
-using log4net.Config;
-using log4net.Core;
-
-using Microsoft.Extensions.Logging;
 
 using Moq;
 
@@ -37,7 +30,7 @@ namespace BrainstormSessions.Test.UnitTests
 
         public void Dispose()
         {
-            _appender.Clear();
+            (Log.Logger as IDisposable)?.Dispose();
         }
 
         [Fact]
@@ -46,15 +39,18 @@ namespace BrainstormSessions.Test.UnitTests
             // Arrange
             var mockRepo = new Mock<IBrainstormSessionRepository>();
             mockRepo.Setup(repo => repo.ListAsync())
-                .ReturnsAsync(GetTestSessions());
+                    .ReturnsAsync(GetTestSessions());
             var controller = new HomeController(mockRepo.Object);
 
-            // Act
-            var result = await controller.Index();
+            using (TestCorrelator.CreateContext())
+            {
+                // Act
+                var result = await controller.Index();
 
-            // Assert
-            var logEntries = _appender.GetEvents();
-            Assert.True(logEntries.Any(l => l.Level == Level.Info), "Expected Info messages in the logs");
+                // Assert
+                var logEntries = TestCorrelator.GetLogEventsFromCurrentContext();
+                Assert.True(logEntries.Any(l => l.Level == LogEventLevel.Information), "Expected Info messages in the logs");
+            }
         }
 
         [Fact]
@@ -63,17 +59,20 @@ namespace BrainstormSessions.Test.UnitTests
             // Arrange
             var mockRepo = new Mock<IBrainstormSessionRepository>();
             mockRepo.Setup(repo => repo.ListAsync())
-                .ReturnsAsync(GetTestSessions());
+                    .ReturnsAsync(GetTestSessions());
             var controller = new HomeController(mockRepo.Object);
             controller.ModelState.AddModelError("SessionName", "Required");
             var newSession = new HomeController.NewSessionModel();
 
-            // Act
-            var result = await controller.Index(newSession);
+            using (TestCorrelator.CreateContext())
+            {
+                // Act
+                var result = await controller.Index(newSession);
 
-            // Assert
-            var logEntries = _appender.GetEvents();
-            Assert.True(logEntries.Any(l => l.Level == Level.Warn), "Expected Warn messages in the logs");
+                // Assert
+                var logEntries = TestCorrelator.GetLogEventsFromCurrentContext();
+                Assert.True(logEntries.Any(l => l.Level == LogEventLevel.Warning), "Expected Warn messages in the logs");
+            }
         }
 
         [Fact]
@@ -84,12 +83,15 @@ namespace BrainstormSessions.Test.UnitTests
             var controller = new IdeasController(mockRepo.Object);
             controller.ModelState.AddModelError("error", "some error");
 
-            // Act
-            var result = await controller.CreateActionResult(model: null);
+            using (TestCorrelator.CreateContext())
+            {
+                // Act
+                var result = await controller.CreateActionResult(model: null);
 
-            // Assert
-            var logEntries = _appender.GetEvents();
-            Assert.True(logEntries.Any(l => l.Level == Level.Error), "Expected Error messages in the logs");
+                // Assert
+                var logEntries = TestCorrelator.GetLogEventsFromCurrentContext();
+                Assert.True(logEntries.Any(l => l.Level == LogEventLevel.Error), "Expected Error messages in the logs");
+            }
         }
 
         [Fact]
@@ -99,8 +101,7 @@ namespace BrainstormSessions.Test.UnitTests
             int testSessionId = 1;
             var mockRepo = new Mock<IBrainstormSessionRepository>();
             mockRepo.Setup(repo => repo.GetByIdAsync(testSessionId))
-                .ReturnsAsync(GetTestSessions().FirstOrDefault(
-                    s => s.Id == testSessionId));
+                    .ReturnsAsync(GetTestSessions().FirstOrDefault(s => s.Id == testSessionId));
             var controller = new SessionController(mockRepo.Object);
 
             using (TestCorrelator.CreateContext())

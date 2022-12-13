@@ -2,16 +2,21 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+
 using BrainstormSessions.Core.Interfaces;
 using BrainstormSessions.Core.Model;
 using BrainstormSessions.ViewModels;
+
 using Microsoft.AspNetCore.Mvc;
+
+using Serilog;
 
 namespace BrainstormSessions.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IBrainstormSessionRepository _sessionRepository;
+        private readonly ILogger _logger = Log.Logger;
 
         public HomeController(IBrainstormSessionRepository sessionRepository)
         {
@@ -20,6 +25,8 @@ namespace BrainstormSessions.Controllers
 
         public async Task<IActionResult> Index()
         {
+            _logger.Information("Getting session list...");
+
             var sessionList = await _sessionRepository.ListAsync();
 
             var model = sessionList.Select(session => new StormSessionViewModel()
@@ -44,6 +51,7 @@ namespace BrainstormSessions.Controllers
         {
             if (!ModelState.IsValid)
             {
+                _logger.Warning("Invalid model state.");
                 return BadRequest(ModelState);
             }
             else
