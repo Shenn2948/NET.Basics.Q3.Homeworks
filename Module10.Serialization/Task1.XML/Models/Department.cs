@@ -1,13 +1,14 @@
 ﻿using System.Text;
-using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 
-namespace Task1.JSON.Models;
+namespace Task1.XML.Models;
 
 public class Department
 {
-    [JsonPropertyName("DepartmentName")]
+    [XmlAttribute]
     public string? Name { get; set; }
 
+    [XmlArray("Employees")]
     public List<Employee>? Employees { get; set; }
 
     public override string ToString()
