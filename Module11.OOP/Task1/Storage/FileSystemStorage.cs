@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Runtime.Caching;
+using System.Text.Json;
 
 using Task1.Models;
 
@@ -8,15 +9,31 @@ public class FileSystemStorage : IStorage
 {
     record DocumentCardFileMetadata(int DocNumber, DocType DocType, string File);
 
+    private readonly MemoryCache _cache = MemoryCache.Default;
+
     public DocumentCard? GetDocumentCardByNumber(int docNumber)
     {
-        var fileMetadata = GetFiles().Select(MapFileToDocumentCardFileMetadata)
-                                     .FirstOrDefault(doc => doc.DocNumber == docNumber);
+        var documentCard = (DocumentCard)_cache.Get(docNumber.ToString());
 
-        if (fileMetadata == null) return null;
+        if (documentCard == null)
+        {
+            var fileMetadata = GetFiles().Select(MapFileToDocumentCardFileMetadata)
+                             .FirstOrDefault(doc => doc.DocNumber == docNumber);
 
-        IDocument? doc = MapFileToDocument(fileMetadata);
-        return new DocumentCard(docNumber, fileMetadata.DocType, doc!);
+            if (fileMetadata == null)
+            {
+                return null;
+            }
+
+            IDocument? doc = MapFileToDocument(fileMetadata);
+
+            documentCard = new DocumentCard(docNumber, fileMetadata.DocType, doc!);
+
+            _cache.Add(new CacheItem(docNumber.ToString(), documentCard),
+                       new CacheItemPolicy() { SlidingExpiration = new TimeSpan(0, 0, 30) });
+        }
+
+        return documentCard;
     }
 
     private static string[] GetFiles()
