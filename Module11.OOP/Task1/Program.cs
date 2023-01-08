@@ -1,9 +1,6 @@
-﻿using Task1.Services;
-using Task1.StorageContext;
+﻿using Task1.Storage;
 
-IStorageContext fileSystemStorage = new FileSystemStorageContext();
-var docService = new DocumentCardService(fileSystemStorage);
-
+IStorage storage = new FileSystemStorage();
 Console.WriteLine("Document cards app");
 
 string? userInput = string.Empty;
@@ -14,7 +11,7 @@ while (userInput?.Trim().ToLower() != "q")
     userInput = Console.ReadLine();
     if (int.TryParse(userInput, out var documentNumber))
     {
-        var card = docService.GetByDocNumber(documentNumber);
+        var card = storage.GetDocumentCardByNumber(documentNumber);
         
         if(card == null)
         {
