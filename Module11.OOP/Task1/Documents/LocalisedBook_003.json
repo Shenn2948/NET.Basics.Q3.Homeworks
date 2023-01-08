@@ -1,0 +1,10 @@
+{
+  "ISBN": "123-1-4321-3333-1",
+  "Title": "Localized book 1",
+  "Authors": "ccc",
+  "NumberOfPages": 111,
+  "OriginalPublisher": "bbb",
+  "CountryOfLocalization": "Belarus",
+  "LocalPublisher": "Belarus publishing",
+  "DatePublished": "2003-08-04T00:00:00"
+}

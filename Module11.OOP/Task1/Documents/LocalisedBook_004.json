@@ -1,0 +1,10 @@
+{
+  "ISBN": "123-1-4321-3333-2",
+  "Title": "Localized book 2",
+  "Authors": "sss",
+  "NumberOfPages": 444,
+  "OriginalPublisher": "ddd",
+  "CountryOfLocalization": "Belarus",
+  "LocalPublisher": "Belarus publishing",
+  "DatePublished": "2004-08-04T00:00:00"
+}
