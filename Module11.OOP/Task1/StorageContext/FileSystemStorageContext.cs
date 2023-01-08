@@ -31,6 +31,7 @@ public class FileSystemStorageContext : IStorageContext
             DocType.Patent => JsonSerializer.Deserialize<Patent>(text),
             DocType.Book => JsonSerializer.Deserialize<Book>(text),
             DocType.LocalisedBook => JsonSerializer.Deserialize<LocalizedBook>(text),
+            DocType.Magazine => JsonSerializer.Deserialize<Magazine>(text),
             _ => throw new ArgumentException("Unable to convert doc content by doc type"),
         };
 

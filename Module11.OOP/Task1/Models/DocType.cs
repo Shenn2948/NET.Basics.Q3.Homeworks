@@ -4,5 +4,6 @@ public enum DocType
 {
     Patent,
     Book,
-    LocalisedBook
+    LocalisedBook,
+    Magazine
 }
